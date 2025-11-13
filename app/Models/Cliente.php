@@ -10,39 +10,47 @@ class Cliente extends Model
     use HasFactory;
 
     /**
-     * Esto le dice a Laravel que tu tabla se llama 'clientes' (en español)
-     * y no 'clients' (en inglés).
+     * La tabla asociada con el modelo.
+     * (Como lo definimos en el Paso 4)
+     *
+     * @var string
      */
     protected $table = 'clientes';
 
     /**
-     * Define los campos que SÍ se pueden llenar desde un formulario.
-     * Protege contra asignación masiva.
+     * La clave primaria asociada con la tabla.
+     * Le decimos a Laravel que 'documento_id' es nuestra clave
+     * en lugar de 'id'.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'documento_id';
+
+    /**
+     * Indica si la clave primaria es autoincremental.
+     * En nuestro caso, no lo es (es un string).
+     *
+     * @var bool
+     */
+    public $incrementing = false;
+
+    /**
+     * El tipo de dato de la clave primaria.
+     *
+     * @var string
+     */
+    protected $keyType = 'string';
+
+    /**
+     * ¡NUEVO!
+     * Los atributos que SÍ se pueden asignar masivamente.
+     * Estos son los campos de tu formulario.
      */
     protected $fillable = [
+        'documento_id',
         'nombre',
         'apellido',
-        'documento_id',
         'fecha_nacimiento',
-        'telefono',
+        'telefono'
     ];
-
-    /**
-     * Define los campos que deben ser tratados como fechas.
-     * 'fecha_nacimiento' será un objeto Carbon automáticamente.
-     */
-    protected $casts = [
-        'fecha_nacimiento' => 'date',
-    ];
-
-    // --- RELACIONES FUTURAS ---
-
-    /**
-     * Relación: Un Cliente puede tener muchas Ventas.
-     * (La definiremos más adelante)
-     */
-    // public function ventas()
-    // {
-    //     return $this->hasMany(Venta::class, 'cliente_id', 'id');
-    // }
 }

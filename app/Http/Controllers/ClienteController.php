@@ -12,10 +12,7 @@ class ClienteController extends Controller
      */
     public function index()
     {
-        // 1. Pide al Modelo Cliente todos los registros
         $clientes = Cliente::all();
-
-        // 2. Devuelve la vista 'clientes.index' y le pasa los datos
         return view('clientes.index', ['clientes' => $clientes]);
     }
 
@@ -23,29 +20,34 @@ class ClienteController extends Controller
      * Muestra el formulario para crear un nuevo cliente. (CREATE)
      */
     public function create()
-    //
     {
-        // Solo muestra el formulario (la vista)
         return view('clientes.create');
     }
 
     /**
+     * ¡ACTUALIZADO!
      * Guarda el nuevo cliente en la base de datos. (CREATE)
-     * (Este es tu siguiente paso para programar)
      */
     public function store(Request $request)
     {
-        // 1. Validar los datos (¡próximo paso!)
-        // $request->validate([ ... ]);
+        // 1. Validar los datos del formulario
+        $validatedData = $request->validate([
+            // Reglas de validación (basadas en tu BD y formulario)
+            'documento_id' => 'required|string|max:20|unique:clientes', // unique:clientes = no debe existir en la tabla clientes
+            'nombre' => 'required|string|max:100',
+            'apellido' => 'required|string|max:100',
+            'fecha_nacimiento' => 'required|date',
+            'telefono' => 'nullable|string|max:15', // nullable = puede ir vacío
+        ]);
 
-        // 2. Crear el cliente (¡próximo paso!)
-        // Cliente::create($request->all());
+        // 2. Si la validación pasa, crea el cliente
+        // (Esto solo funciona si configuraste $fillable en el Modelo)
+        Cliente::create($validatedData);
 
-        // 3. Redirigir a la lista
-        // return redirect()->route('clientes.index');
-
-        // Por ahora, solo muestra "guardado"
-        return "¡Cliente guardado! (Lógica 'store' pendiente)";
+        // 3. Redirige al usuario de vuelta a la lista de clientes
+        //    con un mensaje de éxito "flash".
+        return redirect()->route('clientes.index')
+                         ->with('success', '¡Cliente registrado exitosamente!');
     }
 
     /**

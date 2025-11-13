@@ -20,6 +20,14 @@
             </a>
         </div>
 
+        <!-- ¡NUEVO! Bloque de Mensaje de Éxito -->
+        @if(session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg relative mb-4 shadow" role="alert">
+                <strong class="font-bold">¡Éxito!</strong>
+                <span class="block sm:inline">{{ session('success') }}</span>
+            </div>
+        @endif
+
         <!-- Tabla de Clientes -->
         <div class="bg-white shadow-lg rounded-lg overflow-hidden">
             <table class="min-w-full leading-normal">
