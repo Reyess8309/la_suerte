@@ -4,6 +4,7 @@
     use App\Http\Controllers\UsuarioController; //Para panel usuarios
     use App\Http\Controllers\SorteoController;  //Para panel sorteos
     use App\Http\Controllers\VentaController;   //Para panel ventas
+    use App\Http\Controllers\ReporteController; //Para reportes
 
     // Esta ÚNICA línea crea TODAS las rutas para el CRUD de Clientes:
     // GET /clientes (index)
@@ -21,5 +22,7 @@
     Route::post('/ventas', [VentaController::class, 'store'])->name('ventas.store'); //para guardar venta nueva
     Route::get('/api/buscar-cliente/{documento_id}', [VentaController::class, 'buscarCliente'])->name('api.clientes.buscar'); //para buscar cliente por documento_id
     Route::get('/ventas/{venta}/voucher', [VentaController::class, 'generarVoucher'])->name('ventas.voucher'); //para generar voucher de venta en PDF
-    Route::post('/sorteos/{evento}/registrar-ganador', [SorteoController::class, 'registrarGanador'])->name('sorteos.registrarGanador'); //
-    
+    Route::post('/sorteos/{evento}/registrar-ganador', [SorteoController::class, 'registrarGanador'])->name('sorteos.registrarGanador'); //para registrar ganador de sorteo
+    Route::get('/reportes/recaudacion', [ReporteController::class, 'reporteRecaudacion'])->name('reportes.recaudacion'); //para reporte de recaudacion (Admin)
+    Route::get('/reportes/ganadores', [ReporteController::class, 'reporteGanadores'])->name('reportes.ganadores'); //para reporte de ganadores
+    Route::post('/reportes/premios/{premio}/pagar', [ReporteController::class, 'marcarPremioPagado'])->name('reportes.marcarPagado'); //para marcar premio como pagado

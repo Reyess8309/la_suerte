@@ -45,7 +45,7 @@
                     
                     <!-- Formulario de Búsqueda -->
                     <form id="cliente-search-form">
-                        <label for="documento_id" class="block text-sm font-medium text-gray-700">Documento ID (DPI/CUI)</label>
+                        <label for="documento_id" class="block text-sm font-medium text-gray-700">Documento ID (CUI)</label>
                         <div class="mt-1 flex rounded-md shadow-sm">
                             <input type="text" id="documento_id_input" class="flex-1 block w-full rounded-none rounded-l-md border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="1234567890123">
                             <button type="submit" class="inline-flex items-center px-3 py-2 border border-l-0 border-gray-300 bg-gray-50 text-gray-500 hover:bg-gray-100 rounded-r-md">
@@ -64,7 +64,7 @@
                     
                     <!-- Aviso de Cumpleaños (Oculto por defecto) -->
                     <div id="cumpleanos-aviso" class="mt-4 p-3 bg-yellow-100 border border-yellow-400 text-yellow-800 rounded-lg hidden shadow">
-                        <p class="font-bold">¡Feliz Cumpleaños! (RN-010)</p>
+                        <p class="font-bold">¡Feliz Cumpleaños!</p>
                         <p class="text-sm">El cliente recibirá un 10% más en sus premios hoy.</p>
                     </div>
                 </div>
