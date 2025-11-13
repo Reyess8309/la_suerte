@@ -21,4 +21,5 @@
     Route::post('/ventas', [VentaController::class, 'store'])->name('ventas.store'); //para guardar venta nueva
     Route::get('/api/buscar-cliente/{documento_id}', [VentaController::class, 'buscarCliente'])->name('api.clientes.buscar'); //para buscar cliente por documento_id
     Route::get('/ventas/{venta}/voucher', [VentaController::class, 'generarVoucher'])->name('ventas.voucher'); //para generar voucher de venta en PDF
+    Route::post('/sorteos/{evento}/registrar-ganador', [SorteoController::class, 'registrarGanador'])->name('sorteos.registrarGanador'); //
     

@@ -4,22 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Models\TipoSorteo;
 use App\Models\EventoSorteo;
+use App\Services\ServicioDePremios; // ¡IMPORTANTE!
 use Illuminate\Http\Request;
-use Carbon\Carbon; // Importamos Carbon para manejar fechas fácilmente
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator; // Para validar
 
 class SorteoController extends Controller
 {
     /**
      * Muestra el panel de administración de sorteos (Mockup 2).
-     * Muestra los eventos generados para HOY.
      */
     public function index()
     {
-        $fechaHoy = Carbon::today(); // Obtiene la fecha de hoy (ej. 2025-11-12)
-
-        // Buscamos los eventos de hoy, cargando la info de su 'tipoSorteo'
+        $fechaHoy = Carbon::today();
         $eventosDeHoy = EventoSorteo::where('fecha_evento', $fechaHoy)
-                                   ->with('tipoSorteo') // Carga la relación
+                                   ->with('tipoSorteo')
+                                   ->orderBy('tipo_sorteo_id') // Ordenar
+                                   ->orderBy('numero_evento')
                                    ->get();
 
         return view('sorteos.index', [
@@ -29,42 +30,76 @@ class SorteoController extends Controller
     }
 
     /**
-     * Esta es la lógica CLAVE para cumplir con RN-007, RN-008, RN-009.
      * Genera los 6 eventos para el día de hoy, si no existen.
      */
     public function generarEventosHoy()
     {
         $fechaHoy = Carbon::today();
-
-        // 1. Verificamos si YA se generaron eventos para hoy
         $eventosExistentes = EventoSorteo::where('fecha_evento', $fechaHoy)->count();
 
         if ($eventosExistentes > 0) {
-            // Si ya existen, no hacemos nada y solo redirigimos
             return redirect()->route('sorteos.index')
                              ->with('error', '¡Los eventos para hoy ya habían sido generados!');
         }
 
-        // 2. Si no existen, los generamos
-        $tiposSorteo = TipoSorteo::all(); // Obtenemos "La Santa", "La Rifa", "El Sorteo"
-
+        $tiposSorteo = TipoSorteo::all(); 
         foreach ($tiposSorteo as $tipo) {
-            // Usamos la columna 'eventos_por_dia' de nuestra BD
             for ($i = 1; $i <= $tipo->eventos_por_dia; $i++) {
                 EventoSorteo::create([
                     'tipo_sorteo_id' => $tipo->id,
                     'fecha_evento' => $fechaHoy,
                     'numero_evento' => $i,
-                    'estado' => 'abierto', // Por defecto, listos para vender
+                    'estado' => 'abierto', 
                     'numero_ganador' => null,
                 ]);
             }
         }
 
-        // 3. Redirigimos con mensaje de éxito
         return redirect()->route('sorteos.index')
                          ->with('success', '¡Se generaron los 6 eventos para hoy exitosamente!');
     }
     
-    // Aquí irán las funciones para registrar el número ganador
+    /**
+     * ¡NUEVO!
+     * Registra el número ganador y dispara el cálculo de premios.
+     * RF-010, RF-011
+     */
+    public function registrarGanador(Request $request, EventoSorteo $evento, ServicioDePremios $servicioDePremios)
+    {
+        // 1. Validar el input
+        $validator = Validator::make($request->all(), [
+            'numero_ganador' => 'required|string|digits:2', // Debe ser '05', '99', '00'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->route('sorteos.index')
+                             ->with('error', 'Número inválido. Debe tener 2 dígitos.');
+        }
+
+        // 2. Verificar que el evento no esté ya procesado
+        if ($evento->numero_ganador) {
+            return redirect()->route('sorteos.index')
+                             ->with('error', 'Este sorteo ya tiene un número ganador registrado.');
+        }
+
+        $numero = $request->input('numero_ganador');
+
+        // 3. Guardar el número ganador y cerrar el evento
+        $evento->numero_ganador = $numero;
+        $evento->estado = 'cerrado';
+        $evento->save();
+
+        // 4. ¡LLAMAR AL SERVICIO!
+        // Le pasamos el evento (que ya tiene el num ganador y el tipo de sorteo)
+        $evento->load('tipoSorteo'); // Cargamos la info del factor de pago
+        $premiosGenerados = $servicioDePremios->procesarGanadores($evento);
+
+        $mensajeExito = "¡Número [$numero] guardado! Se generaron $premiosGenerados premios.";
+        if ($premiosGenerados == 0) {
+            $mensajeExito = "¡Número [$numero] guardado! No hubo ganadores (Ganador Desierto)."; // RF-019
+        }
+
+        return redirect()->route('sorteos.index')
+                         ->with('success', $mensajeExito);
+    }
 }

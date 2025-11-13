@@ -12,8 +12,6 @@
         
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-3xl font-bold text-gray-800">Panel de Sorteos (Admin)</h1>
-            <!-- Botón para generar eventos -->
-            <!-- Usamos un formulario POST para llamar a la acción -->
             <form action="{{ route('sorteos.generar') }}" method="POST">
                 @csrf
                 <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
@@ -30,16 +28,14 @@
             </div>
         @endif
         @if(session('error'))
-            <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded-lg relative mb-4 shadow" role="alert">
-                <strong class="font-bold">Aviso:</strong>
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-4 shadow" role="alert">
+                <strong class="font-bold">Error:</strong>
                 <span class="block sm:inline">{{ session('error') }}</span>
             </div>
         @endif
 
-
         <h2 class="text-2xl font-semibold text-gray-700 mb-4">Eventos Generados para Hoy ({{ $fecha }})</h2>
 
-        <!-- Tabla de Eventos del Día (Mockup 2) -->
         <div class="bg-white shadow-lg rounded-lg overflow-hidden">
             <table class="min-w-full leading-normal">
                 <thead class="bg-gray-800 text-white">
@@ -69,14 +65,28 @@
                                     {{ $evento->estado }}
                                 </span>
                             </td>
+                            <!-- Lógica de Formulario -->
                             <td class="px-5 py-4 border-b border-gray-200 text-sm">
-                                <!-- (Aquí irá el formulario para ingresar el número) -->
-                                <input type="text" maxlength="2" class="shadow-sm appearance-none border rounded w-20 py-2 px-3 text-gray-700" placeholder="00">
+                                @if($evento->numero_ganador)
+                                    <!-- Si ya hay un ganador, solo mostrarlo -->
+                                    <span class="text-xl font-bold p-2 bg-gray-200 rounded-lg">{{ $evento->numero_ganador }}</span>
+                                @else
+                                    <!-- Si no hay ganador, mostrar el formulario -->
+                                    <form action="{{ route('sorteos.registrarGanador', $evento->id) }}" method="POST">
+                                        @csrf
+                                        <input type="text" name="numero_ganador" maxlength="2" class="shadow-sm appearance-none border rounded w-20 py-2 px-3 text-gray-700" placeholder="00" required>
+                                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 px-3 rounded-full shadow transition duration-300 ml-2">
+                                            Guardar
+                                        </button>
+                                    </form>
+                                @endif
                             </td>
                             <td class="px-5 py-4 border-b border-gray-200 text-sm">
-                                <button class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-1 px-3 rounded-full shadow transition duration-300">
-                                    Guardar
-                                </button>
+                                @if($evento->numero_ganador)
+                                    <span class="text-gray-500">Procesado</span>
+                                @else
+                                    <span class="text-gray-500">Pendiente</span>
+                                @endif
                             </td>
                         </tr>
                     @empty
