@@ -1,12 +1,8 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Sorteos</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 text-gray-900">
+@extends('layouts.app')
+
+@section('title', 'Modulo de serteos')
+
+@section('content')
 
     <div class="container mx-auto p-8">
         
@@ -41,7 +37,7 @@
                 <thead class="bg-gray-800 text-white">
                     <tr>
                         <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">
-                            Sorteo (Evento)
+                            Sorteo
                         </th>
                         <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">
                             Estado
@@ -65,13 +61,13 @@
                                     {{ $evento->estado }}
                                 </span>
                             </td>
-                            <!-- Lógica de Formulario -->
+                            <!-- Formulario -->
                             <td class="px-5 py-4 border-b border-gray-200 text-sm">
                                 @if($evento->numero_ganador)
-                                    <!-- Si ya hay un ganador, solo mostrarlo -->
+                                    <!-- Si ya hay un ganador mostrarlo -->
                                     <span class="text-xl font-bold p-2 bg-gray-200 rounded-lg">{{ $evento->numero_ganador }}</span>
                                 @else
-                                    <!-- Si no hay ganador, mostrar el formulario -->
+                                    <!-- Si no hay ganador mostrar el formulario -->
                                     <form action="{{ route('sorteos.registrarGanador', $evento->id) }}" method="POST">
                                         @csrf
                                         <input type="text" name="numero_ganador" maxlength="2" class="shadow-sm appearance-none border rounded w-20 py-2 px-3 text-gray-700" placeholder="00" required>
@@ -92,7 +88,7 @@
                     @empty
                         <tr>
                             <td colspan="4" class="text-center px-5 py-5 border-b border-gray-200 text-sm">
-                                <p class="font-semibold text-gray-700">No hay eventos generados para hoy.</p>
+                                <p class="font-semibold text-gray-700">No hay eventos hoy.</p>
                                 <p class="text-gray-500">Haz clic en el botón verde de arriba para generarlos.</p>
                             </td>
                         </tr>
@@ -102,5 +98,4 @@
         </div>
     </div>
 
-</body>
-</html>
+@endsection

@@ -11,15 +11,13 @@ class Cliente extends Model
 
     /**
      * La tabla asociada con el modelo.
-     * (Como lo definimos en el Paso 4)
      *
      * @var string
      */
     protected $table = 'clientes';
 
     /**
-     * La clave primaria asociada con la tabla.
-     * Le decimos a Laravel que 'documento_id' es nuestra clave
+     * 'documento_id' es nuestra clave
      * en lugar de 'id'.
      *
      * @var string
@@ -27,8 +25,6 @@ class Cliente extends Model
     protected $primaryKey = 'documento_id';
 
     /**
-     * Indica si la clave primaria es autoincremental.
-     * En nuestro caso, no lo es (es un string).
      *
      * @var bool
      */
@@ -42,9 +38,7 @@ class Cliente extends Model
     protected $keyType = 'string';
 
     /**
-     * ¡NUEVO!
-     * Los atributos que SÍ se pueden asignar masivamente.
-     * Estos son los campos de tu formulario.
+     * los campos de tu formulario.
      */
     protected $fillable = [
         'documento_id',

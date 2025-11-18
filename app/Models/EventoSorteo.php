@@ -10,7 +10,7 @@ class EventoSorteo extends Model
     use HasFactory;
 
     /**
-     * La tabla asociada con el modelo.
+     * tabla asociada con el modelo.
      */
     protected $table = 'eventos_sorteo';
 
@@ -26,11 +26,10 @@ class EventoSorteo extends Model
     ];
 
     /**
-     * RELACIÓN: Un EventoSorteo pertenece a UN TipoSorteo (ej. La Santa)
+     *  Un EventoSorteo pertenece a UN TipoSorteo
      */
     public function tipoSorteo()
     {
-        // belongsTo(Modelo, 'llave_foranea_en_esta_tabla', 'llave_local_en_la_otra_tabla')
         return $this->belongsTo(TipoSorteo::class, 'tipo_sorteo_id', 'id');
     }
 }

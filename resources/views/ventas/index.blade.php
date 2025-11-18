@@ -1,51 +1,42 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- El CSRF Token es VITAL para que JavaScript pueda enviar datos a Laravel -->
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Módulo de Venta</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Pequeño estilo para el spinner de carga */
-        .loader {
-            border-top-color: #3498db;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-    </style>
-</head>
-<body class="bg-gray-100 text-gray-900">
+@extends('layouts.app')
 
-    <!-- CAMBIO 1: Contenedor principal para ocupar toda la altura -->
+@section('title', 'Módulo de Venta')
+
+<!-- CCodigo de carga para ventas -->
+@push('styles')
+<style>
+    .loader {
+        border-top-color: #3498db;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+</style>
+@endpush
+
+@section('content')
+
     <div class="min-h-screen flex flex-col">
 
         <div class="container mx-auto p-4 md:p-8 flex flex-col flex-1">
             
             <h1 class="text-3xl font-bold text-gray-800 mb-6">Módulo de Venta</h1>
 
-            <!-- Contenedor de Alertas Globales (para JS) -->
             <div id="global-message" class="mb-4"></div>
 
-            <!-- Spinner de Carga Global -->
             <div id="loading-spinner" class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4 hidden"></div>
 
-            <!-- CAMBIO 2: Grid principal que se expande para llenar el espacio -->
+            <!-- Grid principal -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1">
 
-                <!-- ===================================== -->
-                <!-- COLUMNA 1: BÚSQUEDA DE CLIENTE        -->
-                <!-- ===================================== -->
-                <!-- CAMBIO 3: Columna con altura completa y scroll interno si es necesario -->
+                <!-- COLUMNA BÚSQUEDA DE CLIENTE -->
                 <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-lg flex flex-col h-full">
                     <h2 class="text-xl font-bold mb-4">1. Buscar Cliente</h2>
                     
                     <!-- Formulario de Búsqueda -->
                     <form id="cliente-search-form">
-                        <label for="documento_id" class="block text-sm font-medium text-gray-700">Documento ID (CUI)</label>
+                        <label for="documento_id" class="block text-sm font-medium text-gray-700">Documento (CUI)</label>
                         <div class="mt-1 flex rounded-md shadow-sm">
                             <input type="text" id="documento_id_input" class="flex-1 block w-full rounded-none rounded-l-md border-gray-300 focus:ring-blue-500 focus:border-blue-500" placeholder="1234567890123">
                             <button type="submit" class="inline-flex items-center px-3 py-2 border border-l-0 border-gray-300 bg-gray-50 text-gray-500 hover:bg-gray-100 rounded-r-md">
@@ -54,7 +45,7 @@
                         </div>
                     </form>
 
-                    <!-- Info del Cliente (Oculto por defecto) -->
+                    <!-- Info del Cliente cuando existe -->
                     <div id="cliente-info-box" class="mt-6 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg hidden">
                         <h3 class="text-lg font-semibold text-blue-800" id="cliente-nombre"></h3>
                         <p class="text-sm text-blue-700" id="cliente-telefono"></p>
@@ -62,20 +53,17 @@
                         <button id="limpiar-cliente-btn" class="mt-2 text-sm text-red-600 hover:text-red-800">Limpiar</button>
                     </div>
                     
-                    <!-- Aviso de Cumpleaños (Oculto por defecto) -->
+                    <!-- Aviso de Cumpleaños si aplica -->
                     <div id="cumpleanos-aviso" class="mt-4 p-3 bg-yellow-100 border border-yellow-400 text-yellow-800 rounded-lg hidden shadow">
                         <p class="font-bold">¡Feliz Cumpleaños!</p>
                         <p class="text-sm">El cliente recibirá un 10% más en sus premios hoy.</p>
                     </div>
                 </div>
 
-                <!-- ===================================== -->
-                <!-- COLUMNA 2: SORTEOS DISPONIBLES      -->
-                <!-- ===================================== -->
+                <!-- COLUMNA SORTEOS DISPONIBLES      -->
                 <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-lg flex flex-col h-full">
                     <h2 class="text-xl font-bold mb-4">2. Sorteos Disponibles (Hoy)</h2>
                     
-                    <!-- REFINAMIENTO: El scroll se aplica solo a la lista, no a la columna entera -->
                     <div id="sorteos-lista" class="space-y-4 flex-1 overflow-y-auto">
                         @forelse ($eventosHoy as $evento)
                             <div class="border p-4 rounded-lg shadow-sm sorteo-card">
@@ -93,30 +81,27 @@
                             </div>
                         @empty
                             <p class="text-gray-500 text-center font-semibold">No hay sorteos abiertos en este momento.</p>
-                            <p class="text-gray-400 text-center text-sm">Asegúrese de "Generar Sorteos para Hoy" en el panel de Admin.</p>
+                            <p class="text-gray-400 text-center text-sm">Asegúrese de Generar Sorteos para Hoy.</p>
                         @endforelse
                     </div>
                 </div>
 
-                <!-- ===================================== -->
-                <!-- COLUMNA 3: DETALLE DE VENTA ("CARRITO") -->
-                <!-- ===================================== -->
+                <!-- COLUMNA CARRITO -->
                 <div class="lg:col-span-1 bg-white p-6 rounded-lg shadow-lg flex flex-col h-full">
                     <h2 class="text-xl font-bold mb-4">3. Detalle de Venta</h2>
                     
-                    <!-- REFINAMIENTO: El scroll se aplica solo al "carrito" -->
                     <div id="detalle-venta-lista" class="space-y-2 mb-4 flex-1 overflow-y-auto">
                         <p class="text-gray-400 text-center">Añada apuestas desde la Columna 2...</p>
                     </div>
 
-                    <!-- Total (siempre visible) -->
+                    <!-- Total -->
                     <hr class="my-4">
                     <div class="flex justify-between items-center text-xl font-bold">
                         <span>Total:</span>
                         <span id="total-venta">Q0.00</span>
                     </div>
 
-                    <!-- Botones de Acción (siempre visibles) -->
+                    <!-- Botones -->
                     <div class="mt-6 space-y-3">
                         <button id="registrar-venta-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg shadow-md transition duration-300 opacity-50 cursor-not-allowed" disabled>
                             Registrar Venta y Generar Voucher
@@ -127,23 +112,19 @@
                     </div>
                 </div>
 
-            </div> <!-- Fin del grid de 3 columnas -->
-        </div> <!-- Fin del contenedor de página -->
-    </div> <!-- Fin del contenedor full-screen -->
+            </div>
+        </div>
+    </div>
 
-    <!-- ===================================== -->
-    <!-- JAVASCRIPT                          -->
-    <!-- ===================================== -->
     <script>
-        // Este script se ejecuta cuando el HTML está completamente cargado
+        // ejecutar cuando el HTML está completamente cargado
         document.addEventListener('DOMContentLoaded', () => {
 
             // --- ESTADO DE LA APLICACIÓN ---
             let clienteSeleccionado = null;
-            let apuestas = []; // "Carrito" de apuestas
+            let apuestas = [];
 
-            // --- SELECTORES DE ELEMENTOS DEL DOM ---
-            // Columna 1
+            // Columna BUSQUEDA DE CLIENTE
             const clienteSearchForm = document.getElementById('cliente-search-form');
             const documentoIdInput = document.getElementById('documento_id_input');
             const clienteInfoBox = document.getElementById('cliente-info-box');
@@ -153,7 +134,7 @@
             const cumpleanosAviso = document.getElementById('cumpleanos-aviso');
             const limpiarClienteBtn = document.getElementById('limpiar-cliente-btn');
 
-            // Columna 3
+            // Columna carrito
             const listaDetalle = document.getElementById('detalle-venta-lista');
             const totalVentaEl = document.getElementById('total-venta');
             const registrarVentaBtn = document.getElementById('registrar-venta-btn');
@@ -165,32 +146,25 @@
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
 
-            // --- EVENT LISTENERS ---
+            // --- EVENTOS ---
             clienteSearchForm.addEventListener('submit', buscarCliente);
             limpiarClienteBtn.addEventListener('click', limpiarCliente);
             limpiarVentaBtn.addEventListener('click', limpiarTodo);
             registrarVentaBtn.addEventListener('click', registrarVenta);
 
-            // Delegación de eventos para botones CREADOS DINÁMICAMENTE
-            // (Añadir a carrito y Eliminar de carrito)
+            // eventos para botones
+            // Añadir a carrito y Eliminar de carrito
             document.addEventListener('click', (e) => {
-                // Si se hace clic en un botón "Añadir"
                 if (e.target && e.target.classList.contains('add-to-cart-btn')) {
                     anadirApuesta(e.target);
                 }
-                // Si se hace clic en un botón "Eliminar" (X)
                 if (e.target && e.target.classList.contains('remove-from-cart-btn')) {
                     eliminarApuesta(e.target.dataset.index);
                 }
             });
 
-            
-            // --- FUNCIONES ---
 
-            /**
-             * 1. BUSCAR CLIENTE
-             * Llama a la API interna para buscar un cliente por ID.
-             */
+             // BUSCAR CLIENTE
             async function buscarCliente(e) {
                 e.preventDefault();
                 const documentoId = documentoIdInput.value;
@@ -204,7 +178,6 @@
                 limpiarMensaje();
                 
                 try {
-                    // Usamos la ruta nombrada para construir la URL
                     const urlTemplate = `{{ route('api.clientes.buscar', ['documento_id' => 'DUMMY_ID']) }}`;
                     const url = urlTemplate.replace('DUMMY_ID', documentoId);
                     const response = await fetch(url);
@@ -217,7 +190,7 @@
                         clienteIdHidden.value = data.cliente.id;
                         clienteInfoBox.classList.remove('hidden');
 
-                        // Mostrar aviso de cumpleaños (RN-010)
+                        // Mostrar aviso de cumpleaños
                         if (data.cliente.es_cumpleanos) {
                             cumpleanosAviso.classList.remove('hidden');
                         }
@@ -240,8 +213,7 @@
             }
 
             /**
-             * 2. AÑADIR APUESTA (AL "CARRITO")
-             * Se llama al presionar un botón "Añadir".
+             * AÑADIR COMPRA AL CARRITO
              */
             function anadirApuesta(boton) {
                 limpiarMensaje();
@@ -252,7 +224,7 @@
                 const numero = numeroInput.value;
                 const monto = parseFloat(montoInput.value);
 
-                // Validación simple
+                // Validaciones
                 if (!/^\d{2}$/.test(numero)) {
                     mostrarMensaje('El número debe tener 2 dígitos (ej. 05, 30, 99).', 'error');
                     numeroInput.focus();
@@ -272,29 +244,26 @@
                     monto: monto
                 });
 
-                // Actualizar la UI
                 actualizarVistaDetalle();
                 actualizarEstadoBotones();
 
                 // Limpiar inputs
                 numeroInput.value = '';
                 montoInput.value = '';
-                numeroInput.focus(); // Mover foco al siguiente número
+                numeroInput.focus();
             }
 
             /**
-             * 3. ELIMINAR APUESTA (DEL "CARRITO")
-             * Se llama al presionar (X)
+             *ELIMINA APUESTA DEL CARRITO
              */
             function eliminarApuesta(index) {
-                apuestas.splice(index, 1); // Elimina 1 elemento en la posición 'index'
+                apuestas.splice(index, 1);
                 actualizarVistaDetalle();
                 actualizarEstadoBotones();
             }
 
             /**
-             * 4. REGISTRAR VENTA (GUARDAR EN BD)
-             * Llama a la ruta 'ventas.store' con todos los datos.
+             * REGISTRAR VENTA
              */
             async function registrarVenta() {
                 if (!clienteSeleccionado || apuestas.length === 0) {
@@ -320,7 +289,7 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken, // Token de seguridad de Laravel
+                            'X-CSRF-TOKEN': csrfToken,
                             'Accept': 'application/json'
                         },
                         body: JSON.stringify(payload)
@@ -328,19 +297,17 @@
 
                     const data = await response.json();
 
-                    // --- ¡AQUÍ ESTÁ EL CAMBIO! ---
                     if (response.ok && data.success) {
-                        // 1. Mostrar el mensaje de éxito que viene del servidor
+                        // Muestra el mensaje de éxito
                         mostrarMensaje(data.message, 'success');
                         
-                        // 2. Abrir el voucher PDF en una nueva pestaña
+                        // Abre el voucher PDF en una nueva pestaña
                         window.open(data.voucher_url, '_blank');
                         
-                        // 3. Limpiar la interfaz para la siguiente venta
+                        // Limpia la interfaz para la siguiente venta
                         limpiarTodo();
                         
                     } else {
-                        // Error de validación del backend u otro
                         mostrarMensaje(data.message || 'Error al guardar la venta.', 'error');
                     }
 
@@ -349,15 +316,12 @@
                     mostrarMensaje('Error de red al guardar la venta.', 'error');
                 } finally {
                     mostrarLoading(false);
-                    // 'limpiarTodo' ya llama a 'actualizarEstadoBotones'
+                    // limpia todo y actualiza Estado Botones
                 }
             }
 
-
-            // --- FUNCIONES UTILITARIAS ---
-
             /**
-             * RENDER: Actualiza la Columna 3 (Carrito y Total)
+             * Actualizar Columna de Carrito y de Total
              */
             function actualizarVistaDetalle() {
                 listaDetalle.innerHTML = ''; // Limpiar lista
@@ -383,7 +347,7 @@
             }
 
             /**
-             * Lógica de UI: Activa/desactiva el botón de Registrar Venta
+             * Lógica para activar/desactivar el botón de Registrar Venta
              */
             function actualizarEstadoBotones() {
                 const listoParaRegistrar = clienteSeleccionado && apuestas.length > 0;
@@ -410,7 +374,7 @@
             function limpiarTodo() {
                 limpiarCliente();
                 apuestas = [];
-                actualizarVistaDetalle(); // Esto limpia el carrito y pone total en 0
+                actualizarVistaDetalle(); //limpia el carrito y pone total en 0
                 limpiarMensaje();
             }
 
@@ -420,7 +384,7 @@
 
             function limpiarMensaje() {
                 globalMessage.innerHTML = '';
-                globalMessage.className = 'mb-4'; // Resetea clases
+                globalMessage.className = 'mb-4';
             }
 
             function mostrarMensaje(mensaje, tipo = 'error') {
@@ -432,10 +396,9 @@
                 globalMessage.innerHTML = `<div class="${tipoClase} px-4 py-3 rounded-lg relative" role="alert">${mensaje}</div>`;
             }
             
-            // --- INICIALIZACIÓN ---
-            actualizarEstadoBotones(); // Asegura estado inicial correcto
+            actualizarEstadoBotones();
 
-        }); // Fin de DOMContentLoaded
+        });
     </script>
-</body>
-</html>
+
+@endsection

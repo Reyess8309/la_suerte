@@ -16,7 +16,6 @@ class Premio extends Model
 
     /**
      * Los atributos que SÍ se pueden asignar masivamente.
-     * (Basado en el Manual_Tecnico_BD_Espanol.md)
      */
     protected $fillable = [
         'venta_detalle_id',
@@ -29,7 +28,7 @@ class Premio extends Model
     ];
 
     /**
-     * RELACIÓN: Un Premio pertenece a UN Detalle de Venta (la apuesta ganadora)
+     * Un Premio pertenece a UN Detalle de Venta
      */
     public function ventaDetalle()
     {
@@ -37,7 +36,7 @@ class Premio extends Model
     }
 
     /**
-     * RELACIÓN: Un Premio pertenece a UN Cliente (para reportes)
+     * Un Premio pertenece a UN Cliente
      */
     public function cliente()
     {

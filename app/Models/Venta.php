@@ -24,7 +24,7 @@ class Venta extends Model
     ];
 
     /**
-     * RELACIÓN: Una Venta pertenece a UN Cliente
+     * Una Venta pertenece a UN Cliente
      */
     public function cliente()
     {
@@ -32,7 +32,7 @@ class Venta extends Model
     }
 
     /**
-     * RELACIÓN: Una Venta pertenece a UN Usuario (Empleado)
+     * Una Venta pertenece a UN Usuario
      */
     public function usuario()
     {
@@ -40,7 +40,7 @@ class Venta extends Model
     }
 
     /**
-     * RELACIÓN: Una Venta tiene MUCHOS Detalles
+     * Una Venta tiene MUCHOS Detalles
      */
     public function detalles()
     {

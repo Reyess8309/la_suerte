@@ -1,12 +1,7 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporte de Ganadores y Premios</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 text-gray-900">
+@extends('layouts.app')
+@section('title', 'Reporte de ganadores')
+
+@section('content')
 
     <div class="container mx-auto p-8">
         
@@ -26,7 +21,7 @@
             </div>
         @endif
 
-        <!-- Barra de Filtros -->
+        <!-- Filtros de fechas -->
         <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
             <form action="{{ route('reportes.ganadores') }}" method="GET">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -50,17 +45,17 @@
                             <option value="vencido" {{ $filtros['estado'] == 'vencido' ? 'selected' : '' }}>Vencido</option>
                         </select>
                     </div>
-                    <!-- Botón de Acción -->
+                    <!-- Botón Generar reporte -->
                     <div class="flex items-end">
                         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
-                            Generar Reporte
+                            Ver Reporte
                         </button>
                     </div>
                 </div>
             </form>
         </div>
 
-        <!-- Tabla de Premios (RF-018) -->
+        <!-- Tabla de Premios -->
         <h2 class="text-2xl font-semibold text-gray-700 mb-4">Premios Generados</h2>
         <div class="bg-white shadow-lg rounded-lg overflow-hidden">
             <table class="min-w-full leading-normal">
@@ -96,13 +91,14 @@
                                     <p class="text-xs text-gray-600">Vence: <span class="font-bold">{{ \Carbon\Carbon::parse($premio->fecha_vencimiento)->format('d/m/Y') }}</span></this>
                                 @elseif($premio->estado == 'pagado')
                                     <span class="font-semibold text-green-700">Pagado</span>
-                                @else <!-- vencido -->
-                                    <span class="font-semibold text-red-700">Vencido</span> (RF-017)
+                                @else
+                                    <!-- mensaje vencido -->
+                                    <span class="font-semibold text-red-700">Vencido</span>
                                 @endif
                             </td>
                             <td class="px-5 py-4 border-b border-gray-200 text-sm">
                                 @if($premio->estado == 'pendiente_pago' && \Carbon\Carbon::today()->lte(\Carbon\Carbon::parse($premio->fecha_vencimiento)))
-                                    <!-- Si está pendiente Y no ha vencido, mostrar el botón -->
+                                    <!-- Si está pendiente Y no ha vencido, mostrar el botón pagado -->
                                     <form action="{{ route('reportes.marcarPagado', $premio->id) }}" method="POST">
                                         @csrf
                                         <button type"submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-3 rounded-lg text-xs shadow-md transition duration-300">
@@ -127,5 +123,4 @@
 
     </div>
 
-</body>
-</html>
+@endsection

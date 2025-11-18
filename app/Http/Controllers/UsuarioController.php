@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Usuario; // ¡Cambiado!
+use App\Models\Usuario;
 use Illuminate\Http\Request;
-// ¡OJO! No necesitamos 'use Hash' porque el Modelo 'Usuario'
-// se encarga de hashear la contraseña automáticamente
-// gracias al 'cast' que le pusimos.
+
 
 class UsuarioController extends Controller
 {
@@ -35,14 +33,12 @@ class UsuarioController extends Controller
         // 1. Validar los datos del formulario
         $validatedData = $request->validate([
             'nombre' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:usuarios', // email debe ser único en la tabla 'usuarios'
-            'password' => 'required|string|min:8|confirmed', // 'confirmed' busca un campo 'password_confirmation'
-            'rol' => 'required|string|in:admin,employee', // solo permite estos dos valores
+            'email' => 'required|string|email|max:255|unique:usuarios',
+            'password' => 'required|string|min:8|confirmed',
+            'rol' => 'required|string|in:admin,employee',
         ]);
 
         // 2. Si la validación pasa, crea el usuario.
-        // Laravel automáticamente hasheará el campo 'password'
-        // gracias a la configuración en el Modelo Usuario.php
         Usuario::create($validatedData);
 
         // 3. Redirige al usuario de vuelta a la lista de empleados

@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class ClienteController extends Controller
 {
     /**
-     * Muestra una lista de todos los clientes. (READ)
+     * Muestra una lista de todos los clientes.
      */
     public function index()
     {
@@ -17,7 +17,7 @@ class ClienteController extends Controller
     }
 
     /**
-     * Muestra el formulario para crear un nuevo cliente. (CREATE)
+     * Muestra el formulario para crear un nuevo cliente.
      */
     public function create()
     {
@@ -25,27 +25,24 @@ class ClienteController extends Controller
     }
 
     /**
-     * ¡ACTUALIZADO!
-     * Guarda el nuevo cliente en la base de datos. (CREATE)
+     * Guarda el nuevo cliente en la base de datos.
      */
     public function store(Request $request)
     {
         // 1. Validar los datos del formulario
         $validatedData = $request->validate([
-            // Reglas de validación (basadas en tu BD y formulario)
-            'documento_id' => 'required|string|max:20|unique:clientes', // unique:clientes = no debe existir en la tabla clientes
+            // Reglas de validación
+            'documento_id' => 'required|string|max:20|unique:clientes',
             'nombre' => 'required|string|max:100',
             'apellido' => 'required|string|max:100',
             'fecha_nacimiento' => 'required|date',
-            'telefono' => 'nullable|string|max:15', // nullable = puede ir vacío
+            'telefono' => 'nullable|string|max:15',
         ]);
 
         // 2. Si la validación pasa, crea el cliente
-        // (Esto solo funciona si configuraste $fillable en el Modelo)
         Cliente::create($validatedData);
 
         // 3. Redirige al usuario de vuelta a la lista de clientes
-        //    con un mensaje de éxito "flash".
         return redirect()->route('clientes.index')
                          ->with('success', '¡Cliente registrado exitosamente!');
     }

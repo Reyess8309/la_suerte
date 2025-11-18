@@ -6,14 +6,6 @@
     use App\Http\Controllers\VentaController;   //Para panel ventas
     use App\Http\Controllers\ReporteController; //Para reportes
 
-    // Esta ÚNICA línea crea TODAS las rutas para el CRUD de Clientes:
-    // GET /clientes (index)
-    // GET /clientes/create (create)
-    // POST /clientes (store)
-    // GET /clientes/{id} (show)
-    // GET /clientes/{id}/edit (edit)
-    // PUT /clientes/{id} (update)
-    // DELETE /clientes/{id} (destroy)
     Route::resource('clientes', ClienteController::class); //Para panel clientes
     Route::resource('usuarios', UsuarioController::class); //Para panel usuarios
     Route::get('/sorteos', [SorteoController::class, 'index'])->name('sorteos.index'); //para panel sorteo

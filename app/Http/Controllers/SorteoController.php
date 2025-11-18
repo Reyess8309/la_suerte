@@ -4,15 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\TipoSorteo;
 use App\Models\EventoSorteo;
-use App\Services\ServicioDePremios; // ¡IMPORTANTE!
+use App\Services\ServicioDePremios;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Validator; // Para validar
+use Illuminate\Support\Facades\Validator;
 
 class SorteoController extends Controller
 {
     /**
-     * Muestra el panel de administración de sorteos (Mockup 2).
+     * Muestra el panel de administración de sorteos
      */
     public function index()
     {
@@ -30,7 +30,7 @@ class SorteoController extends Controller
     }
 
     /**
-     * Genera los 6 eventos para el día de hoy, si no existen.
+     * Genera los 6 eventos para el día de hoy si no existen.
      */
     public function generarEventosHoy()
     {
@@ -60,15 +60,13 @@ class SorteoController extends Controller
     }
     
     /**
-     * ¡NUEVO!
-     * Registra el número ganador y dispara el cálculo de premios.
-     * RF-010, RF-011
+     * Registra el número ganador y dispara el cálculo de premios
      */
     public function registrarGanador(Request $request, EventoSorteo $evento, ServicioDePremios $servicioDePremios)
     {
-        // 1. Validar el input
+        // 1. Validar el input que tenga dos digitos
         $validator = Validator::make($request->all(), [
-            'numero_ganador' => 'required|string|digits:2', // Debe ser '05', '99', '00'
+            'numero_ganador' => 'required|string|digits:2',
         ]);
 
         if ($validator->fails()) {
@@ -89,14 +87,13 @@ class SorteoController extends Controller
         $evento->estado = 'cerrado';
         $evento->save();
 
-        // 4. ¡LLAMAR AL SERVICIO!
-        // Le pasamos el evento (que ya tiene el num ganador y el tipo de sorteo)
-        $evento->load('tipoSorteo'); // Cargamos la info del factor de pago
+        // 4. LLAMAR AL SERVICIO
+        $evento->load('tipoSorteo');
         $premiosGenerados = $servicioDePremios->procesarGanadores($evento);
 
         $mensajeExito = "¡Número [$numero] guardado! Se generaron $premiosGenerados premios.";
         if ($premiosGenerados == 0) {
-            $mensajeExito = "¡Número [$numero] guardado! No hubo ganadores (Ganador Desierto)."; // RF-019
+            $mensajeExito = "¡Número [$numero] guardado! No hubo ganadores (Ganador Desierto).";
         }
 
         return redirect()->route('sorteos.index')

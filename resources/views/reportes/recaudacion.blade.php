@@ -1,18 +1,13 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporte de Recaudación</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 text-gray-900">
+@extends('layouts.app')
+@section('title', 'Reporte de recaudacion')
+
+@section('content')
 
     <div class="container mx-auto p-8">
         
         <h1 class="text-3xl font-bold text-gray-800 mb-6">Reporte de Recaudación</h1>
 
-        <!-- Barra de Filtros (Mockup 3) -->
+        <!-- Barra de Filtros -->
         <div class="bg-white shadow-lg rounded-lg p-6 mb-6">
             <form action="{{ route('reportes.recaudacion') }}" method="GET">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -38,23 +33,23 @@
                             @endforeach
                         </select>
                     </div>
-                    <!-- Botón de Acción -->
+                    <!-- Botón de Generar reporte -->
                     <div class="flex items-end">
                         <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
-                            Generar Reporte
+                            Ver Reporte
                         </button>
                     </div>
                 </div>
             </form>
         </div>
 
-        <!-- Tarjeta de Total (Mockup 3) -->
+        <!-- Total -->
         <div class="bg-gradient-to-r from-blue-700 to-indigo-800 text-white rounded-lg shadow-xl p-8 mb-6 text-center">
             <h2 class="text-xl font-semibold uppercase tracking-wide">Recaudación Total del Período</h2>
             <p class="text-5xl font-extrabold mt-2">Q{{ number_format($recaudacionTotal, 2) }}</p>
         </div>
 
-        <!-- Tabla de Desglose (Mockup 3) -->
+        <!-- Tabla -->
         <h2 class="text-2xl font-semibold text-gray-700 mb-4">Desglose de Recaudación</h2>
         <div class="bg-white shadow-lg rounded-lg overflow-hidden">
             <table class="min-w-full leading-normal">
@@ -64,10 +59,10 @@
                             Fecha Venta
                         </th>
                         <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">
-                            Sorteo (Evento)
+                            Sorteo
                         </th>
                         <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">
-                            Voucher ID
+                            Voucher No.
                         </th>
                         <th class="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">
                             Número Apostado
@@ -110,5 +105,4 @@
 
     </div>
 
-</body>
-</html>
+@endsection

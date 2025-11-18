@@ -25,18 +25,17 @@ class VentaDetalle extends Model
     ];
 
     /**
-     * RELACIÓN: Un Detalle pertenece a UN EventoSorteo
+     * Un Detalle pertenece a UN EventoSorteo
      */
     public function eventoSorteo()
     {
         return $this->belongsTo(EventoSorteo::class, 'evento_sorteo_id', 'id');
     }
     /**
-    * RELACIÓN: Un Detalle de Venta pertenece a UNA Venta (su "padre")
+    * Un Detalle de Venta pertenece a UNA Venta
     */
     public function venta()
     {
-        // belongsTo(Modelo, 'llave_foranea_en_esta_tabla', 'llave_local_en_la_otra_tabla')
         return $this->belongsTo(Venta::class, 'venta_id', 'id');
     }
 }

@@ -41,7 +41,7 @@
                     <input type="password" id="password_confirmation" name="password_confirmation" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" required>
                 </div>
 
-                <!-- Campo Rol (Select) -->
+                <!-- Campo Rol -->
                 <div class="mb-4">
                     <label for="rol" class="block text-gray-700 text-sm font-bold mb-2">Rol</label>
                     <select id="rol" name="rol" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500" required>

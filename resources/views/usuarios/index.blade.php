@@ -1,12 +1,8 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Empleados</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 text-gray-900">
+@extends('layouts.app')
+
+@section('title', 'Gestion de usuarios')
+
+@section('content')
 
     <div class="container mx-auto p-8">
         
@@ -63,7 +59,7 @@
                     @empty
                         <tr>
                             <td colspan="4" class="text-center px-5 py-5 border-b border-gray-200 text-sm">
-                                No hay empleados registrados todavía.
+                                No existen empleados registrados.
                             </td>
                         </tr>
                     @endforelse
@@ -72,5 +68,4 @@
         </div>
     </div>
 
-</body>
-</html>
+@endsection

@@ -11,45 +11,41 @@ use Carbon\Carbon;
 class ReporteController extends Controller
 {
     /**
-     * Muestra el Reporte de Recaudación (Mockup 3)
-     * RF-020, RF-021
+     * Muestra el Reporte de Recaudación
      */
     public function reporteRecaudacion(Request $request)
     {
         // 1. Obtener los tipos de sorteo para el dropdown de filtro
         $tiposSorteo = TipoSorteo::all();
 
-        // 2. Definir fechas por defecto (hoy)
+        // 2. Definir fechas por defecto
         $fechaInicio = $request->input('fecha_inicio', Carbon::today()->toDateString());
         $fechaFin = $request->input('fecha_fin', Carbon::today()->toDateString());
         $tipoSorteoId = $request->input('tipo_sorteo_id');
 
-        // 3. Construir la consulta a la base de datos (Query Builder)
-        // Usamos 'VentaDetalle' porque tiene el 'monto_apostado'
+        // 3. Construir la consulta a la base de datos
         $query = VentaDetalle::query();
 
         // 4. Aplicar filtros de fecha
-        // Buscamos detalles de ventas creadas entre estas fechas
         $query->whereHas('venta', function ($q) use ($fechaInicio, $fechaFin) {
             $q->whereBetween('created_at', [$fechaInicio . ' 00:00:00', $fechaFin . ' 23:59:59']);
         });
 
-        // 5. Aplicar filtro de Tipo de Sorteo (si se seleccionó uno)
+        // 5. Aplicar filtro de Tipo de Sorteo
         if ($tipoSorteoId) {
-            // Buscamos detalles que pertenezcan a un evento...
+            // Buscamos detalles que pertenezcan a un evento que coincida con el tipo seleccionado
             $query->whereHas('eventoSorteo', function ($q) use ($tipoSorteoId) {
-                // ...cuyo tipo de sorteo coincida
                 $q->where('tipo_sorteo_id', $tipoSorteoId);
             });
         }
 
-        // 6. Cargar las relaciones necesarias (para la tabla)
+        // 6. Cargar las relaciones necesarias
         $query->with('venta', 'eventoSorteo.tipoSorteo');
 
         // 7. Ejecutar la consulta y obtener los detalles
         $detalles = $query->get();
 
-        // 8. Calcular el total (para la tarjeta grande)
+        // 8. Calcular el total
         $recaudacionTotal = $detalles->sum('monto_apostado');
 
         // 9. Devolver la vista con todos los datos
@@ -57,7 +53,7 @@ class ReporteController extends Controller
             'tiposSorteo' => $tiposSorteo,
             'detalles' => $detalles,
             'recaudacionTotal' => $recaudacionTotal,
-            'filtros' => [ // Para rellenar los inputs del formulario
+            'filtros' => [
                 'fecha_inicio' => $fechaInicio,
                 'fecha_fin' => $fechaFin,
                 'tipo_sorteo_id' => $tipoSorteoId
@@ -66,28 +62,27 @@ class ReporteController extends Controller
     }
 
         /**
-     * Muestra el Reporte de Ganadores y Premios (Mockup 3)
-     * RF-016, RF-017, RF-018
+     * Muestra el Reporte de Ganadores y Premios
      */
     public function reporteGanadores(Request $request)
     {
-        // 1. Definir fechas por defecto (últimos 7 días)
+        // 1. Definir fechas por defecto, 7 dias
         $fechaInicio = $request->input('fecha_inicio', Carbon::today()->subDays(7)->toDateString());
         $fechaFin = $request->input('fecha_fin', Carbon::today()->toDateString());
-        $estado = $request->input('estado'); // 'pendiente_pago', 'pagado', 'vencido'
+        $estado = $request->input('estado');
 
-        // 2. Construir la consulta a la tabla 'premios'
+        // 2. Construir la consulta a la labla
         $query = Premio::query();
 
-        // 3. Aplicar filtros de fecha (sobre la fecha de creación del premio)
+        // 3. Aplicar filtros de fecha
         $query->whereBetween('created_at', [$fechaInicio . ' 00:00:00', $fechaFin . ' 23:59:59']);
 
-        // 4. Aplicar filtro de Estado (si se seleccionó uno)
+        // 4. Aplicar filtro de Estado
         if ($estado) {
             $query->where('estado', $estado);
         }
 
-        // 5. Cargar todas las relaciones necesarias para la tabla
+        // 5. Cargar lo necesario para la tabla
         $query->with(
             'cliente', 
             'ventaDetalle.eventoSorteo.tipoSorteo'
@@ -96,7 +91,7 @@ class ReporteController extends Controller
         // 6. Ordenar por más reciente y ejecutar
         $premios = $query->orderBy('created_at', 'desc')->get();
 
-        // 7. Devolver la vista con todos los datos
+        // 7. Cargar la vista con todos los datos
         return view('reportes.ganadores', [
             'premios' => $premios,
             'filtros' => [
@@ -108,8 +103,7 @@ class ReporteController extends Controller
     }
 
     /**
-     * Cambia el estado de un premio a "Pagado"
-     * RF-016
+     * Cambiar el estado de un premio a "Pagado"
      */
     public function marcarPremioPagado(Request $request, Premio $premio)
     {
@@ -119,9 +113,8 @@ class ReporteController extends Controller
                              ->with('error', 'Este premio no se puede marcar como pagado (ya está pagado o vencido).');
         }
 
-        // 2. Validar que no esté vencido (RN-011 / RF-017)
+        // 2. Validar que no esté vencido
         if (Carbon::today()->gt(Carbon::parse($premio->fecha_vencimiento))) {
-            // (Opcional: cambiar estado a 'vencido' aquí)
             $premio->estado = 'vencido';
             $premio->save();
             return redirect()->route('reportes.ganadores')

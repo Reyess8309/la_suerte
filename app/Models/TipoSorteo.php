@@ -14,10 +14,6 @@ class TipoSorteo extends Model
      */
     protected $table = 'tipos_sorteo';
 
-    /**
-     * Indica si el modelo debe tener timestamps (created_at, updated_at).
-     * Esta es una tabla de "catálogo" o configuración, no los necesita.
-     */
     public $timestamps = false;
 
     /**
@@ -30,11 +26,10 @@ class TipoSorteo extends Model
     ];
 
     /**
-     * RELACIÓN: Un Tipo de Sorteo (ej. La Santa) tiene MUCHOS EventosSorteo
+     * Un Tipo de Sorteo tiene MUCHOS EventosSorteo
      */
     public function eventos()
     {
-        // hasMany(Modelo, 'llave_foranea_en_la_otra_tabla', 'llave_local_en_esta_tabla')
         return $this->hasMany(EventoSorteo::class, 'tipo_sorteo_id', 'id');
     }
 }
