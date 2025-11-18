@@ -15,14 +15,15 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class VentaController extends Controller
 {
-     // Muestra la página principal de ventas.
-
+    /**
+     * Muestra la página principal de ventas.
+     */
     public function index()
     {
         // Busca los eventos abiertos de hoy
         $eventosHoy = EventoSorteo::where('fecha_evento', Carbon::today())
                                 ->where('estado', 'abierto')
-                                ->with('tipoSorteo')
+                                ->with('tipoSorteo') // Cargamos la info del tipo de sorteo
                                 ->get();
         
         return view('ventas.index', ['eventosHoy' => $eventosHoy]);
@@ -36,7 +37,7 @@ class VentaController extends Controller
         $cliente = Cliente::where('documento_id', $documento_id)->first();
 
         if ($cliente) {
-            // Verifica si es su cumpleaños
+            // Verificamos si es su cumpleaños
             $esCumpleanos = false;
             if ($cliente->fecha_nacimiento) {
                 $fechaNacimiento = Carbon::parse($cliente->fecha_nacimiento);
@@ -57,7 +58,7 @@ class VentaController extends Controller
             ]);
         }
 
-        // Si no encuentra resultados
+        // Si no se encuentra
         return response()->json([
             'encontrado' => false,
             'mensaje' => 'Cliente no encontrado. Registre al cliente primero.'
@@ -65,11 +66,11 @@ class VentaController extends Controller
     }
 
     /**
-     * Guarda la venta completa en la BD.
+     * Guarda la venta en base de datos
      */
     public function store(Request $request)
     {
-
+        // Validar solicitud
         $validator = Validator::make($request->all(), [
             'cliente_id' => 'required|exists:clientes,id',
             'apuestas' => 'required|array|min:1',
@@ -88,9 +89,8 @@ class VentaController extends Controller
         try {
             $venta = DB::transaction(function () use ($datos, &$totalVenta) {
                 
-                // REVISAR: Hardcodeado. Reemplazar con Auth::id() cuando haya login
-                // $usuario_id = Auth::id(); 
-                $usuario_id = 1;
+                // Obtenemos el ID del usuario logueado
+                $usuario_id = Auth::id(); 
 
                 // Crear la Venta
                 $nuevaVenta = Venta::create([
@@ -99,7 +99,7 @@ class VentaController extends Controller
                     'monto_total' => 0,
                 ]);
 
-
+                // Crear los VentaDetalle
                 foreach ($datos['apuestas'] as $apuesta) {
                     VentaDetalle::create([
                         'venta_id' => $nuevaVenta->id,
@@ -108,17 +108,17 @@ class VentaController extends Controller
                         'monto_apostado' => $apuesta['monto'],
                     ]);
                     
-                    // Calcular el monto_total
                     $totalVenta += $apuesta['monto'];
                 }
 
-                // Actualizar la Venta con el total correcto.
+                // Actualizar el total
                 $nuevaVenta->monto_total = $totalVenta;
                 $nuevaVenta->save();
 
                 return $nuevaVenta;
             });
 
+            // Exito y generar pdf
             return response()->json([
                 'success' => true,
                 'message' => "¡Venta #{$venta->id} registrada exitosamente!",
@@ -136,7 +136,7 @@ class VentaController extends Controller
     }
 
     /**
-     * Genera el PDF del voucher
+     * Genera el PDF del voucher.
      */
     public function generarVoucher(Venta $venta)
     {

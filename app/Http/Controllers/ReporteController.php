@@ -7,6 +7,7 @@ use App\Models\VentaDetalle;
 use App\Models\Premio;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReporteController extends Controller
 {
@@ -61,7 +62,43 @@ class ReporteController extends Controller
         ]);
     }
 
-        /**
+    /**
+     * Generar PDF de Reporte de Recaudación
+     */
+    public function descargarPDFRecaudacion(Request $request)
+    {
+        // Reutilizamos la misma lógica de filtros
+        $fechaInicio = $request->input('fecha_inicio', Carbon::today()->toDateString());
+        $fechaFin = $request->input('fecha_fin', Carbon::today()->toDateString());
+        $tipoSorteoId = $request->input('tipo_sorteo_id');
+
+        $query = VentaDetalle::query();
+        $query->whereHas('venta', function ($q) use ($fechaInicio, $fechaFin) {
+            $q->whereBetween('created_at', [$fechaInicio . ' 00:00:00', $fechaFin . ' 23:59:59']);
+        });
+
+        if ($tipoSorteoId) {
+            $query->whereHas('eventoSorteo', function ($q) use ($tipoSorteoId) {
+                $q->where('tipo_sorteo_id', $tipoSorteoId);
+            });
+        }
+        $query->with('venta', 'eventoSorteo.tipoSorteo');
+        $detalles = $query->get();
+        $recaudacionTotal = $detalles->sum('monto_apostado');
+
+        // Generamos el PDF
+        $pdf = Pdf::loadView('reportes.pdf_recaudacion', [
+            'detalles' => $detalles,
+            'recaudacionTotal' => $recaudacionTotal,
+            'fecha_inicio' => $fechaInicio,
+            'fecha_fin' => $fechaFin,
+            'generado_el' => Carbon::now()->format('d/m/Y H:i:s')
+        ]);
+
+        return $pdf->stream('reporte_recaudacion.pdf');
+    }
+
+    /**
      * Muestra el Reporte de Ganadores y Premios
      */
     public function reporteGanadores(Request $request)
@@ -100,6 +137,34 @@ class ReporteController extends Controller
                 'estado' => $estado
             ]
         ]);
+    }
+
+    /**
+     * Generar PDF de Ganadores
+     */
+    public function descargarPDFGanadores(Request $request)
+    {
+        $fechaInicio = $request->input('fecha_inicio', Carbon::today()->subDays(7)->toDateString());
+        $fechaFin = $request->input('fecha_fin', Carbon::today()->toDateString());
+        $estado = $request->input('estado');
+
+        $query = Premio::query();
+        $query->whereBetween('created_at', [$fechaInicio . ' 00:00:00', $fechaFin . ' 23:59:59']);
+        
+        if ($estado) {
+            $query->where('estado', $estado);
+        }
+        $query->with('cliente', 'ventaDetalle.eventoSorteo.tipoSorteo');
+        $premios = $query->orderBy('created_at', 'desc')->get();
+
+        $pdf = Pdf::loadView('reportes.pdf_ganadores', [
+            'premios' => $premios,
+            'fecha_inicio' => $fechaInicio,
+            'fecha_fin' => $fechaFin,
+            'generado_el' => Carbon::now()->format('d/m/Y H:i:s')
+        ]);
+
+        return $pdf->stream('reporte_ganadores.pdf');
     }
 
     /**

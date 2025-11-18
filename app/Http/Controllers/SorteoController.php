@@ -8,6 +8,7 @@ use App\Services\ServicioDePremios;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SorteoController extends Controller
 {
@@ -98,5 +99,26 @@ class SorteoController extends Controller
 
         return redirect()->route('sorteos.index')
                          ->with('success', $mensajeExito);
+    }
+
+    /**
+     * Generar Reporte PDF de los sorteos del día
+     */
+    public function descargarPDFSorteos()
+    {
+        $fechaHoy = Carbon::today();
+        $eventos = EventoSorteo::where('fecha_evento', $fechaHoy)
+                               ->with('tipoSorteo')
+                               ->orderBy('tipo_sorteo_id')
+                               ->orderBy('numero_evento')
+                               ->get();
+
+        $pdf = Pdf::loadView('reportes.pdf_sorteos', [
+            'eventos' => $eventos,
+            'fecha' => $fechaHoy->format('d/m/Y'),
+            'generado_el' => Carbon::now()->format('d/m/Y H:i:s')
+        ]);
+
+        return $pdf->stream('reporte_sorteos_dia.pdf');
     }
 }

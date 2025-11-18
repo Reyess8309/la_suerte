@@ -7,13 +7,19 @@
     <div class="container mx-auto p-8">
         
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">Panel de Sorteos (Admin)</h1>
-            <form action="{{ route('sorteos.generar') }}" method="POST">
-                @csrf
-                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
-                    Generar Sorteos para Hoy ({{ $fecha }})
-                </button>
-            </form>
+            <h1 class="text-3xl font-bold text-gray-800">Sorteos</h1>
+            <div class="flex space-x-2">
+                
+                <form action="{{ route('sorteos.generar') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
+                        Generar Sorteos para Hoy ({{ $fecha }})
+                    </button>
+                </form>
+                <a href="{{ route('sorteos.pdf') }}" target="_blank" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
+                    PDF
+                </a>
+            </div>
         </div>
 
         <!-- Mensajes de Éxito o Error -->
@@ -65,7 +71,29 @@
                             <td class="px-5 py-4 border-b border-gray-200 text-sm">
                                 @if($evento->numero_ganador)
                                     <!-- Si ya hay un ganador mostrarlo -->
-                                    <span class="text-xl font-bold p-2 bg-gray-200 rounded-lg">{{ $evento->numero_ganador }}</span>
+                                    <div class="flex flex-col items-start">
+                                        <div class="flex items-center mb-1">
+                                            <span class="text-xl font-bold p-2 bg-gray-200 rounded-lg mr-2">{{ $evento->numero_ganador }}</span>
+                                            
+                                            @if(!$evento->tieneGanadores())
+                                                <span class="px-2 py-1 text-xs font-bold text-red-700 bg-red-100 border border-red-300 rounded shadow-sm">
+                                                    GANADOR DESIERTO
+                                                </span>
+                                            @else
+                                                <span class="px-2 py-1 text-xs font-bold text-green-700 bg-green-100 border border-green-300 rounded shadow-sm">
+                                                    GANADORES
+                                                </span>
+                                            @endif
+                                        </div>
+
+                                        <!-- Muestra el ganador o ganadores -->
+                                        @if($evento->tieneGanadores())
+                                            <p class="text-xs text-gray-600 font-medium">
+                                                <span class="font-bold text-gray-800">Ganador(es):</span> 
+                                                {{ $evento->obtenerNombresGanadores() }}
+                                            </p>
+                                        @endif
+                                    </div>
                                 @else
                                     <!-- Si no hay ganador mostrar el formulario -->
                                     <form action="{{ route('sorteos.registrarGanador', $evento->id) }}" method="POST">

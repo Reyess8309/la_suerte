@@ -7,7 +7,7 @@
     <div class="container mx-auto p-8">
         
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-gray-800">Módulo de Empleados</h1>
+            <h1 class="text-3xl font-bold text-gray-800">Empleados</h1>
             <a href="{{ route('usuarios.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300">
                 + Registrar Nuevo Empleado
             </a>
