@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Usuario;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 
 class UsuarioController extends Controller
@@ -59,7 +60,7 @@ class UsuarioController extends Controller
      */
     public function edit(Usuario $usuario)
     {
-        // (Pendiente)
+        return view('usuarios.edit', compact('usuario'));
     }
 
     /**
@@ -67,7 +68,28 @@ class UsuarioController extends Controller
      */
     public function update(Request $request, Usuario $usuario)
     {
-        // (Pendiente)
+        $rules = [
+            'nombre' => 'required|string|max:255',
+            'email' => ['required', 'email', 'max:255', Rule::unique('usuarios')->ignore($usuario->id)],
+            'rol' => 'required|string|in:admin,employee',
+        ];
+
+        // Solo validamos password si el usuario escribió algo
+        if ($request->filled('password')) {
+            $rules['password'] = 'confirmed|min:8';
+        }
+
+        $validatedData = $request->validate($rules);
+
+        // Si no se escribió password, la quitamos del array para no sobreescribirla con null
+        if (!$request->filled('password')) {
+            unset($validatedData['password']);
+        }
+
+        $usuario->update($validatedData);
+
+        return redirect()->route('usuarios.index')
+                         ->with('success', '¡Empleado actualizado exitosamente!');
     }
 
     /**

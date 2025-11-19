@@ -41,8 +41,7 @@
                             <td class="py-3 px-4">{{ $cliente->telefono }}</td>
                             <td class="py-3 px-4">{{ \Carbon\Carbon::parse($cliente->fecha_nacimiento)->format('d/m/Y') }}</td>
                             <td class="py-3 px-4">
-                                <a href="#" class="text-blue-600 hover:text-blue-800">Editar</a>
-                                <!-- (Aquí iría el form de Eliminar) -->
+                                <a href="{{ route('clientes.edit', $cliente->documento_id) }}" class="text-blue-600 hover:text-blue-800 font-semibold">Editar</a>
                             </td>
                         </tr>
                     @empty

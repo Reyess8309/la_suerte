@@ -53,7 +53,7 @@
                                 </span>
                             </td>
                             <td class="px-5 py-4 border-b border-gray-200 text-sm">
-                                <a href="#" class="text-indigo-600 hover:text-indigo-900">Editar</a>
+                                <a href="{{ route('usuarios.edit', $usuario->id) }}" class="text-blue-600 hover:text-blue-800 font-semibold">Editar</a>
                             </td>
                         </tr>
                     @empty

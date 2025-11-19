@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class ClienteController extends Controller
 {
     /**
-     * Muestra una lista de todos los clientes.
+     * Muestra la lista de todos los clientes.
      */
     public function index()
     {
@@ -60,7 +60,7 @@ class ClienteController extends Controller
      */
     public function edit(Cliente $cliente)
     {
-        // (Pendiente)
+        return view('clientes.edit', compact('cliente'));
     }
 
     /**
@@ -68,7 +68,18 @@ class ClienteController extends Controller
      */
     public function update(Request $request, Cliente $cliente)
     {
-        // (Pendiente)
+        // Validar los datos del formulario
+        $validatedData = $request->validate([
+            'nombre' => 'required|string|max:100',
+            'apellido' => 'required|string|max:100',
+            'fecha_nacimiento' => 'required|date',
+            'telefono' => 'nullable|string|max:15',
+        ]);
+
+        $cliente->update($validatedData);
+
+        return redirect()->route('clientes.index')
+                         ->with('success', '¡Cliente actualizado exitosamente!');
     }
 
     /**
