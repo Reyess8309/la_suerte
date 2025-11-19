@@ -1,59 +1,26 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Planteameinto del Problema
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
-
-## About Laravel
-
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
-
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Learning Laravel
-
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+En la tienda “La Suerte”, uno de los servicios es la venta de números a la población, más que
+todo para la gente que le gusta apostar. Se sabe que durante el día existen 3 sorteos “La
+Santa”, “La Rifa” y “El Sorteo” estos son totalmente distintos. La Santa, paga Q25.00 por Q1.00;
+La Rifa, paga Q70.00 por Q1.00 y El Sorteo, paga Q150.00 por Q1.00.
+Las personas pueden acercarse y comprar un número desde el 00 hasta el 99, para cada uno
+de los sorteos. Un mismo número puede ser vendido a “n” personas si así se requiere. La
+diferencia es que cada persona, puede apostar la cantidad que desee. Cabe mencionar, que de
+forma diaria existen 3 sorteos de La Santa; 1 sorteos de La Rifa y 2 sorteos de El Sorteo.
+Don Juan dueño de la tienda “La Suerte”, ha decidido que cuando un cliente esta de
+cumpleaños, le pagará un 10% más al premio real. Lo ha contratado a usted, para que le
+diseñe un Software donde pueda llevar el control de cada uno de sus sorteos. Desea
+almacenar la información del cliente, con sus datos principales, por lo menos para localizarlo y
+así pagar el premio. Requiere también llevar el control de lo recaudado por cada sorteo tanto
+de forma general como de forma individual de cada evento durante el día. Para el cobro del
+premio, el cliente tiene 5 días hábiles para poder llegar a reclamarlo, luego de que se cumpla el
+tiempo, el mismo ya no puede ser reclamado.
+Requiere imprimir un voucher de pago, cuando el cliente llegue a dejar su aporte, donde se
+indicaría los datos del cliente, para que sorteo es, y para qué número de sorteo durante el día.
+Así mismo el monto que el cliente llegó a apostar, también la persona que lo atendió; esto para
+controles internos de atención al cliente. Don Juan quiere que el software le muestre un listado
+de los ganadores al final del día, si en algún sorteo, no existió ganador, deberá aparecer como
+“ganador desierto”. Así mismo un reporte donde pueda observar lo recaudado durante el día o
+durante un período de tiempo por todos los sorteos o un sorteo en particular, incluso si desea
+ver el sorteo 1 de La Santa de X día, debe poder tener la capacidad de mostrarlo.
